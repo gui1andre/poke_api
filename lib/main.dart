@@ -95,7 +95,21 @@ class _DashboardState extends State<Dashboard> {
                                 fontSize: 40, fontWeight: FontWeight.bold),
                           ),
                           Image.network(snapshot.data!.linkImage),
-                          Text('${snapshot.data?.tipo.types?.toString()}')
+                          Container(
+                            height: 200,
+                            width: double.maxFinite,
+                            child: ListView.builder(
+                                itemCount: snapshot.data!.tipo.types!.length,
+                                itemBuilder: (context, index) {
+                                  return Text(
+                                    '${snapshot.data?.tipo.types?[index].type!.name!.capitalize()}',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                    ),
+                                  );
+                                }),
+                          )
                         ],
                       ),
                     );
@@ -129,7 +143,8 @@ class Progress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Container(
+      alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,

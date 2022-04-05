@@ -74,5 +74,7 @@ class Type {
     data['name'] = this.name;
 
     return data;
+
+
   }
 }
