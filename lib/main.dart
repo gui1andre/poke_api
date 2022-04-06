@@ -46,91 +46,264 @@ class _DashboardState extends State<Dashboard> {
       appBar: AppBar(
         leading: const PokedexButton(),
         leadingWidth: 300,
-        title: const Text('Pokedex'),
+        title: const Text(
+          'Pokedex',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: Colors.red,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
-            child: SizedBox(
-              width: 300,
-              child: TextField(
-                controller: nomePoke,
-                decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      setState(() {});
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
+              child: SizedBox(
+                width: 300,
+                child: TextField(
+                  controller: nomePoke,
+                  decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () {
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.red),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.red,
+                        spreadRadius: 1,
+
+                        // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: FutureBuilder<Pokemon>(
+                    future: _webClient.searchPokemon(nomePoke.text),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.none:
+                          // TODO: Handle this case.
+                          break;
+                        case ConnectionState.waiting:
+                          // TODO: Handle this case.
+                          return const Progress();
+                        case ConnectionState.active:
+                          // TODO: Handle this case.
+                          break;
+                        case ConnectionState.done:
+                          // TODO: Handle this case.
+
+                          if (snapshot.hasData) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  snapshot.data!.name.capitalize(),
+                                  style: const TextStyle(
+                                      fontSize: 40, fontWeight: FontWeight.bold),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 0, 16, 16),
+                                  child: Image.network(snapshot.data!.linkImage),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(16),
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade200,
+                                          borderRadius: BorderRadius.circular(16),
+                                          border: Border.all(color: Colors.red),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.red,
+                                              spreadRadius: 1,
+
+                                              // changes position of shadow
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            const Text(
+                                              'Type',
+                                              style: TextStyle(
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            ConstrainedBox(
+                                              constraints: BoxConstraints(minHeight: 50),
+                                              child: ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
+                                                itemCount:
+                                                    snapshot.data!.tipo.types!.length,
+                                                itemBuilder: (context, index) {
+                                                  return Text(
+                                                    '${snapshot.data?.tipo.types?[index].type!.name!.capitalize()}',
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade200,
+                                          borderRadius: BorderRadius.circular(16),
+                                          border: Border.all(color: Colors.red),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.red,
+                                              spreadRadius: 1,
+
+                                              // changes position of shadow
+                                            ),
+                                          ],
+                                        ),
+                                        width: 150,
+                                        child: Column(
+                                          children: [
+                                            const Text(
+                                              'Abilities',
+                                              style: TextStyle(
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            ConstrainedBox(
+                                              constraints: BoxConstraints(minHeight: 50),
+                                              child: ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
+                                                itemCount: snapshot.data!.habilidades
+                                                    .abilities.length,
+                                                itemBuilder: (context, index) {
+                                                  return Text(
+                                                    '${snapshot.data!.habilidades.abilities[index].ability.name.capitalize()}',
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(color: Colors.red),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.red,
+                                        spreadRadius: 1,
+
+                                        // changes position of shadow
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      const Text(
+                                        'Stats',
+                                        style: TextStyle(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount:
+                                            snapshot.data!.status.stats!.length,
+                                        itemBuilder: (context, index) {
+                                          return Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                '${snapshot.data!.status.stats![index].stat!.name!.capitalize()}: ',
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              Text(
+                                                '${snapshot.data!.status.stats![index].baseStat}',
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+
+                          return Column(
+                            children: const [
+                              CenteredMessage(
+                                'Pokemon não encontrado',
+                                icon: Icons.warning,
+                              ),
+                            ],
+                          );
+                      }
+                      return const CenteredMessage(
+                        'Unknown error',
+                        icon: Icons.error,
+                      );
                     },
                   ),
                 ),
               ),
             ),
-          ),
-          FutureBuilder<Pokemon>(
-            future: _webClient.searchPokemon(nomePoke.text),
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                  // TODO: Handle this case.
-                  break;
-                case ConnectionState.waiting:
-                  // TODO: Handle this case.
-                  return const Progress();
-                case ConnectionState.active:
-                  // TODO: Handle this case.
-                  break;
-                case ConnectionState.done:
-                  // TODO: Handle this case.
-
-                  if (snapshot.hasData) {
-                    return Center(
-                      child: Column(
-                        children: [
-                          Text(
-                            snapshot.data!.name.capitalize(),
-                            style: const TextStyle(
-                                fontSize: 40, fontWeight: FontWeight.bold),
-                          ),
-                          Image.network(snapshot.data!.linkImage),
-                          Container(
-                            height: 200,
-                            width: double.maxFinite,
-                            child: ListView.builder(
-                                itemCount: snapshot.data!.tipo.types!.length,
-                                itemBuilder: (context, index) {
-                                  return Text(
-                                    '${snapshot.data?.tipo.types?[index].type!.name!.capitalize()}',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                    ),
-                                  );
-                                }),
-                          )
-                        ],
-                      ),
-                    );
-                  }
-
-                  return Column(
-                    children: const [
-                      CenteredMessage(
-                        'Pokemon não encontrado',
-                        icon: Icons.warning,
-                      ),
-                    ],
-                  );
-              }
-              return const CenteredMessage(
-                'Unknown error',
-                icon: Icons.error,
-              );
-            },
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -210,64 +383,64 @@ class PokedexButton extends StatefulWidget {
 class _PokedexButtonState extends State<PokedexButton> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+          child: Stack(
             children: [
               Container(
-                height: 40,
-                width: 40,
+                height: 35,
+                width: 35,
                 decoration: BoxDecoration(
                     color: Colors.blue,
-                    borderRadius: BorderRadius.circular(50),
+                    borderRadius: BorderRadius.circular(45),
                     border: Border.all(color: Colors.white)),
               ),
               Positioned(
                 top: 8,
                 left: 8,
                 child: Container(
-                  height: 10,
-                  width: 10,
+                  height: 8,
+                  width: 8,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(50),
+                    borderRadius: BorderRadius.circular(45),
                   ),
                 ),
               ),
             ],
           ),
-          Container(
-            height: 20,
-            width: 20,
+        ),
+        Container(
+          height: 15,
+          width: 15,
+          decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: Colors.black.withOpacity(0.4))),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          child: Container(
+            height: 15,
+            width: 15,
             decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(20),
+                color: Colors.yellow,
+                borderRadius: BorderRadius.circular(15),
                 border: Border.all(color: Colors.black.withOpacity(0.4))),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-            child: Container(
-              height: 20,
-              width: 20,
-              decoration: BoxDecoration(
-                  color: Colors.yellow,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.black.withOpacity(0.4))),
-            ),
-          ),
-          Container(
-            height: 20,
-            width: 20,
-            decoration: BoxDecoration(
-                color: Colors.green,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.black.withOpacity(0.4))),
-          ),
-        ],
-      ),
+        ),
+        Container(
+          height: 15,
+          width: 15,
+          decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: Colors.black.withOpacity(0.4))),
+        ),
+      ],
     );
   }
 }
